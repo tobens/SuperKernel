@@ -209,6 +209,7 @@ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
 	*fcntl_count = 0;
 	*flock_count = 0;
 
+	spin_lock(&inode->i_lock);
 	for (lock = inode->i_flock; lock != NULL; lock = lock->fl_next) {
 		if (lock->fl_flags & FL_POSIX)
 			++(*fcntl_count);
@@ -219,6 +220,7 @@ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
 		list_for_each_entry(lock, &ctx->flc_flock, fl_list)
 			++(*flock_count);
 	}
+	spin_unlock(&inode->i_lock);
 	dout("counted %d flock locks and %d fcntl locks",
 	     *flock_count, *fcntl_count);
 }
@@ -242,6 +244,7 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
 	dout("encoding %d flock and %d fcntl locks", num_flock_locks,
 	     num_fcntl_locks);
 
+	spin_lock(&inode->i_lock);
 	for (lock = inode->i_flock; lock != NULL; lock = lock->fl_next) {
 		if (lock->fl_flags & FL_POSIX) {
 			++seen_fcntl;
@@ -271,6 +274,7 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
 		}
 	}
 fail:
+	spin_unlock(&inode->i_lock);
 	return err;
 }
 
