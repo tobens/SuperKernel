@@ -634,9 +634,29 @@ static void object_err(struct kmem_cache *s, struct page *page,
 {
 	slab_bug(s, "%s", reason);
 	print_trailer(s, page, object);
+
+	if (slub_debug)
+		panic("SLUB ERROR: object_err");
 }
 
 static void slab_err(struct kmem_cache *s, struct page *page,
+			const char *fmt, ...)
+{
+	va_list args;
+	char buf[100];
+
+	va_start(args, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, args);
+	va_end(args);
+	slab_bug(s, "%s", buf);
+	print_page_info(page);
+	dump_stack();
+
+	if (slub_debug)
+		panic("SLUB ERROR: slab_err");
+}
+
+static void slab_err_nopanic(struct kmem_cache *s, struct page *page,
 			const char *fmt, ...)
 {
 	va_list args;
@@ -689,6 +709,9 @@ static int check_bytes_and_report(struct kmem_cache *s, struct page *page,
 	pr_err("INFO: 0x%p-0x%p. First byte 0x%x instead of 0x%x\n",
 					fault, end - 1, fault[0], value);
 	print_trailer(s, page, object);
+
+	if (slub_debug)
+		panic("SLUB ERROR: check_bytes_and_report. Can it be restored?");
 
 	restore_bytes(s, what, value, fault, end);
 	return 0;
@@ -776,8 +799,11 @@ static int slab_pad_check(struct kmem_cache *s, struct page *page)
 	while (end > fault && end[-1] == POISON_INUSE)
 		end--;
 
-	slab_err(s, page, "Padding overwritten. 0x%p-0x%p", fault, end - 1);
+	slab_err_nopanic(s, page, "Padding overwritten. 0x%p-0x%p", fault, end - 1);
 	print_section("Padding ", end - remainder, remainder);
+
+	if (slub_debug)
+		panic("SLUB ERROR: slab_pad_check. Can it be restored?");
 
 	restore_bytes(s, "slab padding", POISON_INUSE, end - remainder, end);
 	return 0;
@@ -3143,7 +3169,7 @@ static void list_slab_objects(struct kmem_cache *s, struct page *page,
 				     sizeof(long), GFP_ATOMIC);
 	if (!map)
 		return;
-	slab_err(s, page, text, s->name);
+	slab_err_nopanic(s, page, text, s->name);
 	slab_lock(page);
 
 	get_map(s, page, map);
@@ -3154,6 +3180,10 @@ static void list_slab_objects(struct kmem_cache *s, struct page *page,
 			print_tracking(s, p);
 		}
 	}
+	
+	if (slub_debug)
+		panic("SLUB ERROR: list_slab_objects.");
+
 	slab_unlock(page);
 	kfree(map);
 #endif
