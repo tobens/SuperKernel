@@ -96,6 +96,7 @@
 #ifdef CONFIG_X86_LOCAL_APIC
 #include <asm/smp.h>
 #endif
+
 #ifdef CONFIG_RELOCATABLE_KERNEL
 #include <linux/memblock.h>
 #endif
@@ -604,9 +605,7 @@ asmlinkage __visible void __init start_kernel(void)
 #if defined(CONFIG_SEC_BSP)
 	sec_boot_stat_get_start_kernel();
 #endif
-#ifdef CONFIG_RELOCATABLE_KERNEL
-	rkp_call(KASLR_MEM_RESERVE, kaslr_mem, kaslr_size, 0, 0, 0); 
-#endif 
+
 	/*
 	 * Set up the scheduler prior starting any interrupts (such as the
 	 * timer interrupt). Full topology setup happens at smp_init()
@@ -713,6 +712,7 @@ asmlinkage __visible void __init start_kernel(void)
 
 	check_bugs();
 
+	acpi_subsystem_init();
 	sfi_init_late();
 
 	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
