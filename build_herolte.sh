@@ -16,7 +16,7 @@ DTB_PADDING=0
 
 FUNC_CLEAN_DTB()
 {
-	if ! [ -d $RDIR/$arch/ARCH/boot/dts ] ; then
+	if ! [ -d $RDIR/arch/$ARCH/boot/dts ] ; then
 		echo "no directory : "$RDIR/arch/$ARCH/boot/dts""
 	else
 		echo "rm files in : "$RDIR/arch/$ARCH/boot/dts/*.dtb""
@@ -101,6 +101,8 @@ mv $RDIR/arch/$ARCH/boot/dtb.img $RDIR/arch/$ARCH/boot/boot.img-dtb
 
 case $MODEL in
 herolte)
+	rm -f $RDIR/ramdisk/SM-G930F/split_img/boot.img-zImage
+	rm -f $RDIR/ramdisk/SM-G930F/split_img/boot.img-dtb
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/SM-G930F/split_img/boot.img-zImage
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-dtb $RDIR/ramdisk/SM-G930F/split_img/boot.img-dtb
 	cd $RDIR/ramdisk/SM-G930F
@@ -108,6 +110,8 @@ herolte)
 	echo SEANDROIDENFORCE >> image-new.img
 	;;
 hero2lte)
+	rm -f $RDIR/ramdisk/SM-G935F/split_img/boot.img-zImage
+	rm -f $RDIR/ramdisk/SM-G935F/split_img/boot.img-dtb
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/SM-G935F/split_img/boot.img-zImage
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-dtb $RDIR/ramdisk/SM-G935F/split_img/boot.img-dtb
 	cd $RDIR/ramdisk/SM-G935F
