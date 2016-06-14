@@ -103,10 +103,16 @@ case $MODEL in
 herolte)
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/SM-G930F/split_img/boot.img-zImage
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-dtb $RDIR/ramdisk/SM-G930F/split_img/boot.img-dtb
+	cd $RDIR/ramdisk/SM-G930F
+	'/root/SuperKernel/ramdisk/SM-G930F/repackimg.sh'
+	echo SEANDROIDENFORCE >> image-new.img
 	;;
 hero2lte)
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-zImage $RDIR/ramdisk/SM-G935F/split_img/boot.img-zImage
 	mv -f $RDIR/arch/$ARCH/boot/boot.img-dtb $RDIR/ramdisk/SM-G935F/split_img/boot.img-dtb
+	cd $RDIR/ramdisk/SM-G935F
+	'/root/SuperKernel/ramdisk/SM-G935F/repackimg.sh'
+	echo SEANDROIDENFORCE >> image-new.img
 	;;
 *)
 	echo "Unknown device: $MODEL"
