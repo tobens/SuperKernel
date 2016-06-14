@@ -1682,4 +1682,4 @@ service daemonsu /sbin/launch_daemonsu.sh
     oneshot
 
 # SuperSU:PATCH:274
-# SuperSU:STOCK:4ee6cb166d954444f00a2a2aad46533edc1476ec
+# SuperSU:STOCK:82d9d0bc2f551aec7539c01758626d3c517328d5
